@@ -516,7 +516,7 @@ with tab1:
     )
     fig.update_layout(title=t(f"Финансовый результат — {selected_period}", f"Financial result — {selected_period}"), showlegend=False, yaxis_title=t("тыс. ₽", "₽ thousand"))
     st.plotly_chart(fig, use_container_width=True)
-    pptx_sections.append({"tab": "Финансовые показатели", "heading": ins.pnl_insight(data['pnl'], cur_months, prev_months, lang=LANG.lower()), "figs": [fig]})
+    pptx_sections.append({"tab": t("Финансовые показатели", "Financials"), "heading": ins.pnl_insight(data['pnl'], cur_months, prev_months, lang=LANG.lower()), "figs": [fig]})
 
     # Пороговый флаг по маржинальной прибыли (gross_profit/revenue, тот же "total"
     # что и в waterfall выше) — без новой инфраструктуры, просто условный баннер
@@ -576,7 +576,7 @@ with tab1:
 
     col_chart, col_kpi = st.columns([2, 1])
     col_chart.plotly_chart(fig2, use_container_width=True)
-    pptx_sections.append({"tab": "Финансовые показатели", "heading": "Распределение выручки, консультаций и клиентов", "figs": [fig2]})
+    pptx_sections.append({"tab": t("Финансовые показатели", "Financials"), "heading": t("Распределение выручки, консультаций и клиентов", "Revenue, consultations and clients over time"), "figs": [fig2]})
 
     with col_kpi:
         # Не дублируем метрики текущего месяца (они уже на Сводке) — здесь ИТОГО
@@ -688,7 +688,7 @@ with tab4:
                 f'<span style="font-weight:700;color:{TEXT_DARK};">{pct:.0%}</span></div>',
                 unsafe_allow_html=True,
             )
-    pptx_sections.append({"tab": "Продукты/направления", "heading": ins.direction_insight(data['by_direction'], cur_months, prev_months, lang=LANG.lower()), "figs": [fig3, fig4]})
+    pptx_sections.append({"tab": t("Продукты/направления", "Products/Directions"), "heading": ins.direction_insight(data['by_direction'], cur_months, prev_months, lang=LANG.lower()), "figs": [fig3, fig4]})
 
     with st.expander(t("Детализация выручки по направлениям и месяцам", "Revenue detail by direction and month")):
         pivot_df = data["by_direction"].pivot(index="month", columns="direction", values="revenue").fillna(0)
@@ -725,7 +725,7 @@ with tab4:
         fig_dm.update_layout(title=t(f"Выручка, маржа и маржинальность по направлениям — {selected_period}", f"Revenue, margin and margin % by direction — {selected_period}"))
         fig_dm.layout.yaxis2.tickformat = ".0%"
         st.plotly_chart(fig_dm, use_container_width=True)
-        pptx_sections.append({"tab": "Продукты/направления", "heading": f"Маржинальность направлений — {selected_period}", "figs": [fig_dm]})
+        pptx_sections.append({"tab": t("Продукты/направления", "Products/Directions"), "heading": t(f"Маржинальность направлений — {selected_period}", f"Margin by direction — {selected_period}"), "figs": [fig_dm]})
     else:
         st.info(t("Нет данных по марже направлений — запустите etl/build_direction_margin.py", "No direction-margin data — run etl/build_direction_margin.py"))
 
@@ -762,7 +762,7 @@ with tab4:
         top_arpu_dir = arpu_cur["arpu"].idxmax()
         st.markdown(t(f"**Самый высокий средний чек — {top_arpu_dir} ({fmt_money(arpu_cur.loc[top_arpu_dir, 'arpu'])}).**",
                       f"**The highest average check is in {dlabel(top_arpu_dir)} ({fmt_money(arpu_cur.loc[top_arpu_dir, 'arpu'])}).**"))
-    pptx_sections.append({"tab": "Продукты/направления", "heading": f"ARPU по направлению — {selected_period}", "figs": [fig_arpu]})
+    pptx_sections.append({"tab": t("Продукты/направления", "Products/Directions"), "heading": t(f"ARPU по направлению — {selected_period}", f"ARPU by direction — {selected_period}"), "figs": [fig_arpu]})
 
 # ═══════════════════════ ПРОДОЛЖЕНИЕ: Продукты/направления (грейды, форматы, косметология, инъекции) ═══════════════════════
 with tab2:
@@ -844,7 +844,7 @@ with tab2:
         if loss_pct is not None:
             st.markdown(t(f"**{loss_pct:.0%}** записей теряются из-за переносов и отмен",
                           f"**{loss_pct:.0%}** of bookings are lost to reschedules and cancellations"))
-        pptx_sections.append({"tab": "Клиенты", "heading": ins.funnel_insight(data['funnel'], cur_months, prev_months, lang=LANG.lower()), "figs": [fig_funnel]})
+        pptx_sections.append({"tab": t("Клиенты", "Clients"), "heading": ins.funnel_insight(data['funnel'], cur_months, prev_months, lang=LANG.lower()), "figs": [fig_funnel]})
 
         st.markdown(t("**Динамика конверсии, отмен и переносов по месяцам**", "**Conversion, cancellation and reschedule trend by month**"))
         funnel_trend = data["funnel"][data["funnel"]["month"].isin(HIST_MONTHS)].copy()
@@ -869,7 +869,7 @@ with tab2:
         st.plotly_chart(fig_funnel_trend, use_container_width=True)
         funnel_trend_text = ins.funnel_trend_insight(data["funnel"], HIST_MONTHS, lang=LANG.lower())
         st.markdown(f"_{funnel_trend_text}_")
-        pptx_sections.append({"tab": "Клиенты", "heading": funnel_trend_text, "figs": [fig_funnel_trend]})
+        pptx_sections.append({"tab": t("Клиенты", "Clients"), "heading": funnel_trend_text, "figs": [fig_funnel_trend]})
     else:
         st.info(t(
             "Нет данных по записям/отменам/переносам — эта выгрузка из CRM ещё не подключена. "
@@ -940,7 +940,7 @@ with tab2:
     st.plotly_chart(fig6, use_container_width=True)
     if selected_cohorts:
         st.markdown(f"_{ins.cohort_ltv_insight(data['cohort'], selected_cohorts, lang=LANG.lower())}_")
-    pptx_sections.append({"tab": "Клиенты", "heading": clients_text, "figs": [fig5, fig6]})
+    pptx_sections.append({"tab": t("Клиенты", "Clients"), "heading": clients_text, "figs": [fig5, fig6]})
 
     st.divider()
     T.section(t("Отток (churn) по специальностям", "Churn by specialty"))
@@ -1012,7 +1012,7 @@ with tab2:
         st.plotly_chart(fig_churn, use_container_width=True)
         churn_text = ins.churn_insight(cs, lang=LANG.lower())
         st.markdown(f"_{churn_text}_")
-        pptx_sections.append({"tab": "Клиенты", "heading": churn_text, "figs": [fig_churn]})
+        pptx_sections.append({"tab": t("Клиенты", "Clients"), "heading": churn_text, "figs": [fig_churn]})
     else:
         st.info(t("Нет данных по оттоку из таблицы — запустите etl/load_retention_from_sheet.py (нужен интернет).",
                   "No churn data from the sheet — run etl/load_retention_from_sheet.py (needs internet)."))
@@ -1077,7 +1077,7 @@ with tab2:
         retention_sc_text = ins.retention_scorecard_insight(sc, lang=LANG.lower())
         st.markdown(f"_{retention_sc_text}_")
         if sc_figs:
-            pptx_sections.append({"tab": "Клиенты", "heading": retention_sc_text, "figs": sc_figs})
+            pptx_sections.append({"tab": t("Клиенты", "Clients"), "heading": retention_sc_text, "figs": sc_figs})
 
         if data["cohort_retention"] is not None:
             cr = data["cohort_retention"].dropna(subset=["cohort_month"])
@@ -1094,7 +1094,7 @@ with tab2:
             st.plotly_chart(fig_ret, use_container_width=True)
             retention_cohort_text = ins.retention_cohort_insight(cr, lang=LANG.lower())
             st.markdown(f"_{retention_cohort_text}_")
-            pptx_sections.append({"tab": "Клиенты", "heading": retention_cohort_text, "figs": [fig_ret]})
+            pptx_sections.append({"tab": t("Клиенты", "Clients"), "heading": retention_cohort_text, "figs": [fig_ret]})
     else:
         st.info(t("Нет данных по удержанию из таблицы — запустите etl/load_retention_from_sheet.py (нужен интернет).",
                   "No retention data from the sheet — run etl/load_retention_from_sheet.py (needs internet)."))
@@ -1145,7 +1145,7 @@ with tab2:
             st.plotly_chart(fig_interval, use_container_width=True)
         ltv_interval_text = ins.ltv_interval_insight(cr, lang=LANG.lower())
         st.markdown(f"_{ltv_interval_text}_")
-        pptx_sections.append({"tab": "Клиенты", "heading": ltv_interval_text, "figs": [fig_ltv_sp, fig_interval]})
+        pptx_sections.append({"tab": t("Клиенты", "Clients"), "heading": ltv_interval_text, "figs": [fig_ltv_sp, fig_interval]})
 
 with tab3:
     T.section(t("Загрузка кабинетов", "Room utilization"))
@@ -1186,7 +1186,7 @@ with tab3:
         st.error(t(f"Загрузка кабинетов критически низкая: {util_total:.0%} (порог 20%).", f"Room utilization is critically low: {util_total:.0%} (threshold 20%)."))
     elif util_total < 0.35:
         st.warning(t(f"Загрузка кабинетов ниже целевой: {util_total:.0%} (порог 35%).", f"Room utilization is below target: {util_total:.0%} (threshold 35%)."))
-    pptx_sections.append({"tab": "Операционная эффективность", "heading": ins.rooms_insight(data['room_util'], cur_months, prev_months, lang=LANG.lower()), "figs": gauge_figs})
+    pptx_sections.append({"tab": t("Операционная эффективность", "Operations"), "heading": ins.rooms_insight(data['room_util'], cur_months, prev_months, lang=LANG.lower()), "figs": gauge_figs})
 
 
     st.divider()
@@ -1219,7 +1219,7 @@ with tab3:
             trend_word = t("выросли", "grew") if trend_delta >= 0 else t("снизились", "declined")
             st.markdown(t(f"**Консультации {trend_word} на {abs(trend_delta):.0%} с {cons_by_month.iloc[0]['visit_month']} по {cons_by_month.iloc[-1]['visit_month']}.**",
                           f"**Consultations {trend_word} {abs(trend_delta):.0%} from {cons_by_month.iloc[0]['visit_month']} to {cons_by_month.iloc[-1]['visit_month']}.**"))
-    pptx_sections.append({"tab": "Операционная эффективность", "heading": "Динамика проведённых консультаций", "figs": [fig11]})
+    pptx_sections.append({"tab": t("Операционная эффективность", "Operations"), "heading": t("Динамика проведённых консультаций", "Consultations over time"), "figs": [fig11]})
 
     st.divider()
 
@@ -1271,7 +1271,7 @@ with tab3:
         margin=dict(t=56),
     )
     st.plotly_chart(fig8, use_container_width=True)
-    pptx_sections.append({"tab": "Операционная эффективность", "heading": ins.doctors_insight(data['team'], cur_months, prev_months, visits_cur=n_visits_actual(cur_months), visits_prev=n_visits_actual(prev_months) if prev_months else None, lang=LANG.lower()), "figs": [fig8]})
+    pptx_sections.append({"tab": t("Операционная эффективность", "Operations"), "heading": ins.doctors_insight(data['team'], cur_months, prev_months, visits_cur=n_visits_actual(cur_months), visits_prev=n_visits_actual(prev_months) if prev_months else None, lang=LANG.lower()), "figs": [fig8]})
 
     st.divider()
     T.section(t("Загрузка врачей и выручка топ-5 специалистов", "Top-5 specialist workload and revenue"))
@@ -1298,7 +1298,7 @@ with tab3:
     x_pad = x_span * 0.35 if x_span else top5_bubble["avg_check"].max() * 0.2
     fig9.update_xaxes(range=[top5_bubble["avg_check"].min() - x_pad, top5_bubble["avg_check"].max() + x_pad])
     st.plotly_chart(fig9, use_container_width=True)
-    pptx_sections.append({"tab": "Операционная эффективность", "heading": top5_text, "figs": [fig9]})
+    pptx_sections.append({"tab": t("Операционная эффективность", "Operations"), "heading": top5_text, "figs": [fig9]})
 
     with st.expander(t("Все врачи за период — детализация", "All doctors for the period — detail")):
         doc_hours = data["doctors_util"][data["doctors_util"]["month"].isin(cur_months)].groupby("doctor")["closed_hours"].sum()
@@ -1367,7 +1367,7 @@ with tab3:
         rpd_word = t("выросла", "grew") if rpd_delta >= 0 else t("снизилась", "declined")
         st.markdown(t(f"**Выручка на врача {rpd_word} на {abs(rpd_delta):.0%} к прошлому периоду.**",
                       f"**Revenue per doctor {rpd_word} {abs(rpd_delta):.0%} vs. the prior period.**"))
-    pptx_sections.append({"tab": "Операционная эффективность", "heading": "Выручка на 1 врача по месяцам", "figs": [fig_rpd]})
+    pptx_sections.append({"tab": t("Операционная эффективность", "Operations"), "heading": t("Выручка на 1 врача по месяцам", "Revenue per doctor by month"), "figs": [fig_rpd]})
 
 
 with tab4:
@@ -1385,7 +1385,7 @@ with tab4:
         top_grade = last_row.idxmax()
         st.markdown(t(f"**Больше всего консультаций в {grade_share_pct.index[-1]} — у грейда {top_grade} ({last_row[top_grade]:.0%}).**",
                       f"**{grade_share_pct.index[-1]} had the most consultations from {glabel(top_grade)} ({last_row[top_grade]:.0%}).**"))
-    pptx_sections.append({"tab": "Продукты/направления", "heading": "Распределение консультаций по грейдам", "figs": [fig12]})
+    pptx_sections.append({"tab": t("Продукты/направления", "Products/Directions"), "heading": t("Распределение консультаций по грейдам", "Consultation share by grade"), "figs": [fig12]})
 
     T.section(t("Распределение консультаций по длительности приёма (внутри грейдов)", "Consultation share by visit length (within grades)"))
     fmt_cur = data["format_by_grade"][data["format_by_grade"]["month"].isin(cur_months)]
@@ -1410,7 +1410,7 @@ with tab4:
         avg_share_longest = fmt_pivot_pct[max(fmt_pivot_pct.columns)].mean()
         st.markdown(t(f"**Самый длинный формат ({longest_fmt} мин) в среднем занимает {avg_share_longest:.0%} визитов по грейдам.**",
                       f"**The longest format ({longest_fmt} min) accounts for {avg_share_longest:.0%} of visits on average across grades.**"))
-    pptx_sections.append({"tab": "Продукты/направления", "heading": "Распределение форматов по грейдам", "figs": [fig13]})
+    pptx_sections.append({"tab": t("Продукты/направления", "Products/Directions"), "heading": t("Распределение форматов по грейдам", "Consultation share by visit length (within grades)"), "figs": [fig13]})
 
 # ═══════════════════════ БЛОК 3: Направления и эффективность ═══════════════════════
 with tab4:
@@ -1474,7 +1474,7 @@ with tab4:
         fig15.add_hline(y=avg_visits_per_doctor, line_dash="dash", line_color=GRAY,
                         annotation_text=t(f"Среднее: {avg_visits_per_doctor:.0f}", f"Average: {avg_visits_per_doctor:.0f}"), annotation_position="top right")
         st.plotly_chart(fig15, use_container_width=True)
-    pptx_sections.append({"tab": "Продукты/направления", "heading": ins.grade_insight(data['grade_metrics'], cur_months, prev_months, lang=LANG.lower()), "figs": [fig14, fig15]})
+    pptx_sections.append({"tab": t("Продукты/направления", "Products/Directions"), "heading": ins.grade_insight(data['grade_metrics'], cur_months, prev_months, lang=LANG.lower()), "figs": [fig14, fig15]})
 
     T.section(t("Эффективность грейдов в стоматологии", "Grade efficiency in dentistry"))
     top_rpd_grade = gm_cur["revenue_per_doctor"].idxmax()
@@ -1499,7 +1499,7 @@ with tab4:
         fig17.update_layout(yaxis=dict(title=t("₽/визит", "₽/visit")), yaxis2=dict(title=t("₽/мин", "₽/min"), overlaying="y", side="right"), title=t("Средний чек и выручка/мин по грейдам", "Average check and revenue/min by grade"))
         fig17.update_traces(line_shape="spline", line_smoothing=1.3, selector=dict(type="scatter"))
         st.plotly_chart(fig17, use_container_width=True)
-    pptx_sections.append({"tab": "Продукты/направления", "heading": "Эффективность грейдов в стоматологии", "figs": [fig16, fig17]})
+    pptx_sections.append({"tab": t("Продукты/направления", "Products/Directions"), "heading": t("Эффективность грейдов в стоматологии", "Grade efficiency in dentistry"), "figs": [fig16, fig17]})
 
     T.section(t("Длительность приёмов в стоматологии", "Visit length in dentistry"))
     fmt_total = fmt_pivot.sum(axis=0)
@@ -1524,7 +1524,7 @@ with tab4:
                             labels={"avg_check": t("Средний чек, ₽", "Average check, ₽"), "n_visits": t("Кол-во визитов", "Visit count"), "grade": t("Грейд", "Grade"), "format_min": t("Формат, мин", "Format, min")})
         fig19.update_traces(line_shape="spline", line_smoothing=1.3, selector=dict(type="scatter"))
         st.plotly_chart(fig19, use_container_width=True)
-    pptx_sections.append({"tab": "Продукты/направления", "heading": "Длительность приёмов в стоматологии", "figs": [fig18, fig19]})
+    pptx_sections.append({"tab": t("Продукты/направления", "Products/Directions"), "heading": t("Длительность приёмов в стоматологии", "Visit length in dentistry"), "figs": [fig18, fig19]})
 
     st.divider()
     T.section(t("Косметология: выручка и эффективность", "Cosmetology: revenue and efficiency"))
@@ -1558,7 +1558,7 @@ with tab4:
                      labels={"month": t("Месяц", "Month"), "revenue_k": t("Выручка, тыс. ₽", "Revenue, ₽ thousand")})
     fig20.update_traces(line_shape="spline", line_smoothing=1.3, selector=dict(type="scatter"))
     st.plotly_chart(fig20, use_container_width=True)
-    pptx_sections.append({"tab": "Продукты/направления", "heading": ins.neuro_insight(data['neuro'], data['neuro_top_doctor'], cur_months, prev_months, lang=LANG.lower()), "figs": [fig20]})
+    pptx_sections.append({"tab": t("Продукты/направления", "Products/Directions"), "heading": ins.neuro_insight(data['neuro'], data['neuro_top_doctor'], cur_months, prev_months, lang=LANG.lower()), "figs": [fig20]})
 
     st.divider()
     T.section(t("Инъекции и гигиенические услуги", "Injectables and hygiene services"))
@@ -1600,7 +1600,7 @@ with tab4:
         fig22.update_layout(title=t("Гигиенические услуги", "Hygiene services"), yaxis=dict(title=t("тыс. ₽", "₽ thousand")), yaxis2=dict(overlaying="y", side="right"))
         fig22.update_traces(line_shape="spline", line_smoothing=1.3, selector=dict(type="scatter"))
         st.plotly_chart(fig22, use_container_width=True)
-    pptx_sections.append({"tab": "Продукты/направления", "heading": "Инъекции и гигиенические услуги", "figs": [fig21, fig22]})
+    pptx_sections.append({"tab": t("Продукты/направления", "Products/Directions"), "heading": t("Инъекции и гигиенические услуги", "Injectables and hygiene services"), "figs": [fig21, fig22]})
 
     st.divider()
     T.section(t("Маржа с продажи 1 упаковки препарата", "Margin per package sold"))
@@ -1627,7 +1627,7 @@ with tab4:
         with st.expander(t("Детализация по препаратам", "Detail by product")):
             dmg_display = dmg_cur.rename(index=plabel)
             st.dataframe(dmg_display.style.format({"revenue": fmt_num, "cost": fmt_num, "margin": fmt_num, "margin_pct": "{:.0%}"}), use_container_width=True)
-        pptx_sections.append({"tab": "Продукты/направления", "heading": f"Маржа по препаратам — {selected_period}", "figs": [fig_dmg]})
+        pptx_sections.append({"tab": t("Продукты/направления", "Products/Directions"), "heading": t(f"Маржа по препаратам — {selected_period}", f"Margin by product — {selected_period}"), "figs": [fig_dmg]})
     else:
         st.info(t("Нет данных по марже препаратов на выбранный период.", "No product-margin data for the selected period."))
 
@@ -1648,7 +1648,7 @@ with tab4:
         fig_cs.update_yaxes(tickformat=".1%")
         fig_cs.update_traces(line_shape="spline", line_smoothing=1.3, selector=dict(type="scatter"))
         st.plotly_chart(fig_cs, use_container_width=True)
-        pptx_sections.append({"tab": "Продукты/направления", "heading": "Cross-sell rate по месяцам", "figs": [fig_cs]})
+        pptx_sections.append({"tab": t("Продукты/направления", "Products/Directions"), "heading": t("Cross-sell rate по месяцам", "Cross-sell rate by month"), "figs": [fig_cs]})
     else:
         st.info(t("Нет данных по cross-sell rate — запустите etl/build_report_metrics.py", "No cross-sell data — run etl/build_report_metrics.py"))
 
@@ -1712,7 +1712,7 @@ with tab7:
             fig_k = T.gauge_donut(v, label, color=color, text_color=text_color)
             kpi_cols[i % 3].plotly_chart(fig_k, use_container_width=True)
             kpi_figs.append(fig_k)
-        pptx_sections.append({"tab": "KPI", "heading": ins.kpi_insight(data['breakeven'], cur_months, lang=LANG.lower()), "figs": kpi_figs})
+        pptx_sections.append({"tab": t("KPI", "KPI"), "heading": ins.kpi_insight(data['breakeven'], cur_months, lang=LANG.lower()), "figs": kpi_figs})
     else:
         st.info(t(f"Нет плановых значений на {selected_period} в KPI-файле.", f"No plan values for {selected_period} in the KPI file."))
 
@@ -1851,8 +1851,8 @@ with tab6:
                 burn_word = t("вырос", "grew") if burn_trend_delta >= 0 else t("снизился", "declined")
                 st.markdown(t(f"**Burn rate {burn_word} на {abs(burn_trend_delta):.0%} за отслеживаемый период; долг — {fmt_money(cr_hist.iloc[-1]['total_debt'])}.**",
                               f"**Burn rate {burn_word} {abs(burn_trend_delta):.0%} over the tracked period; debt — {fmt_money(cr_hist.iloc[-1]['total_debt'])}.**"))
-        pptx_sections.append({"tab": "Запас прочности", "heading": "Остаток денежных средств и burn rate (по данным финмодели)", "figs": [fig_cash]})
-        pptx_sections.append({"tab": "Запас прочности", "heading": "Burn rate и долговая нагрузка", "figs": [fig_combo]})
+        pptx_sections.append({"tab": t("Запас прочности", "Margin of Safety"), "heading": t("Остаток денежных средств и burn rate (по данным финмодели)", "Cash balance and burn rate (per financial model)"), "figs": [fig_cash]})
+        pptx_sections.append({"tab": t("Запас прочности", "Margin of Safety"), "heading": t("Burn rate и долговая нагрузка", "Burn rate and debt load"), "figs": [fig_combo]})
 
         st.markdown(
             f'<p style="{CAPTION_STYLE}">{t(
@@ -1952,7 +1952,7 @@ with tab5:
                 margin=dict(t=64),
             )
             st.plotly_chart(fig_margin_pct, use_container_width=True)
-        pptx_sections.append({"tab": "Юнит-экономика", "heading": f"Валовая маржа по грейдам/специальностям — {selected_period}", "figs": [fig_margin, fig_margin_pct]})
+        pptx_sections.append({"tab": t("Юнит-экономика", "Unit Economics"), "heading": t(f"Валовая маржа по грейдам/специальностям — {selected_period}", f"Gross margin by grade/specialty — {selected_period}"), "figs": [fig_margin, fig_margin_pct]})
 
         st.divider()
         T.section(t("Валовая маржа на 1 врача по месяцам", "Gross margin per doctor by month"))
@@ -1977,7 +1977,7 @@ with tab5:
             fig_g.update_xaxes(type="category")
             col.plotly_chart(fig_g, use_container_width=True)
             grade_area_figs.append(fig_g)
-        pptx_sections.append({"tab": "Юнит-экономика", "heading": "Валовая маржа на 1 врача в месяц по грейдам", "figs": grade_area_figs})
+        pptx_sections.append({"tab": t("Юнит-экономика", "Unit Economics"), "heading": t("Валовая маржа на 1 врача в месяц по грейдам", "Gross margin per doctor by month, by grade"), "figs": grade_area_figs})
 
         with st.expander(t("Все врачи за период — детализация юнит-экономики", "All doctors for the period — unit economics detail")):
             doctor_detail = econ_cur.groupby(["doctor", "grade", "specialty"]).agg(
@@ -2033,7 +2033,7 @@ with tab5:
                 fig_anom.update_xaxes(tickformat=".0%")
                 fig_anom.update_layout(title=t("Отклонение возврата на 2-й приём от среднего по специальности", "2nd-visit return deviation from specialty average"), yaxis=dict(autorange="reversed"))
                 st.plotly_chart(fig_anom, use_container_width=True)
-                pptx_sections.append({"tab": "Юнит-экономика", "heading": "Врачи с аномальным удержанием", "figs": [fig_anom]})
+                pptx_sections.append({"tab": t("Юнит-экономика", "Unit Economics"), "heading": t("Врачи с аномальным удержанием", "Doctors with anomalous retention"), "figs": [fig_anom]})
             else:
                 st.markdown(t("**Явных аномалий по удержанию (>10 п.п. ниже среднего по специальности) не найдено.**",
                               "**No clear retention anomalies (>10 pp below specialty average) found.**"))
@@ -2174,7 +2174,7 @@ with tab8:
                 "it takes to recoup acquiring one client)\n"
                 "- LTV:CAC = LTV (see the Clients tab) / CAC — a healthy target is usually ≥ 3:1",
             ))
-        pptx_sections.append({"tab": "CAC", "heading": ins.cac_insight(mkt, data['monthly_client'], data['pnl'], cur_months, ltv_cur_top, lang=LANG.lower()), "figs": [fig_mkt, fig_cac]})
+        pptx_sections.append({"tab": t("CAC", "CAC"), "heading": ins.cac_insight(mkt, data['monthly_client'], data['pnl'], cur_months, ltv_cur_top, lang=LANG.lower()), "figs": [fig_mkt, fig_cac]})
 
 # ═══════════════════════ ПРОГНОЗ ═══════════════════════
 with tab9:
@@ -2359,7 +2359,7 @@ with tab9:
         )
         fig_scn.update_layout(title=t("P&L сценария (среднемесячно)", "Scenario P&L (monthly average)"), showlegend=False, yaxis_title=t("тыс. ₽", "₽ thousand"))
         st.plotly_chart(fig_scn, use_container_width=True)
-        pptx_sections.append({"tab": "Прогноз", "heading": f"Сценарный P&L — горизонт {horizon} мес.", "figs": [fig_scn]})
+        pptx_sections.append({"tab": t("Прогноз", "Forecast"), "heading": t(f"Сценарный P&L — горизонт {horizon} мес.", f"Scenario P&L — {horizon}-mo. horizon"), "figs": [fig_scn]})
 
         st.divider()
         T.section(t("Денежный поток по сценарию", "Cash flow under the scenario"), t("Остаток = текущий факт + накопленная сценарная прибыль/убыток", "Balance = current actual + accumulated scenario profit/loss"))
@@ -2372,7 +2372,7 @@ with tab9:
         fig_cash_scn.update_layout(title=t("Прогнозный остаток денежных средств", "Projected cash balance"), showlegend=False, yaxis_title=t("тыс. ₽", "₽ thousand"))
         fig_cash_scn.update_xaxes(type="category")
         st.plotly_chart(fig_cash_scn, use_container_width=True)
-        pptx_sections.append({"tab": "Прогноз", "heading": "Прогнозный остаток денежных средств", "figs": [fig_cash_scn]})
+        pptx_sections.append({"tab": t("Прогноз", "Forecast"), "heading": t("Прогнозный остаток денежных средств", "Projected cash balance"), "figs": [fig_cash_scn]})
 
         first_negative = next((m for m, c in zip(months_ahead, cash_traj) if c < 0), None)
         if cash_base < 0:
@@ -2411,44 +2411,45 @@ with tab9:
         def _build_forecast_excel() -> bytes:
             """Собирает 3 листа: допущения (было/станет), P&L сценария (среднемесячно),
             денежный поток по месяцам горизонта — для выгрузки кнопкой ниже."""
+            col_metric, col_assumption, col_base, col_scenario = t("Показатель", "Metric"), t("Допущение", "Assumption"), t("База", "Base"), t("Сценарий", "Scenario")
             assumptions_df = pd.DataFrame([
-                {"Показатель": "Команда врачей", "Допущение": f"{team_delta:+.0%}",
-                 "База": base_n_doctors, "Сценарий": n_doctors_scn},
-                {"Показатель": "Объём записи, шт/мес", "Допущение": f"{booking_delta:+.0%}",
-                 "База": base_n_booked_month, "Сценарий": n_booked_scn},
-                {"Показатель": "Конверсия", "Допущение": f"{conversion_delta:+.0%}",
-                 "База": base_conversion, "Сценарий": conversion_scn},
-                {"Показатель": "Загрузка, визитов/врача/мес", "Допущение": f"{utilization_delta:+.0%}",
-                 "База": visits_per_doctor_base, "Сценарий": visits_per_doctor_base * (1 + utilization_delta)},
-                {"Показатель": "Средний чек, ₽", "Допущение": f"{price_delta:+.0%}",
-                 "База": base_avg_check, "Сценарий": avg_check_scn},
-                {"Показатель": "Постоянные расходы, ₽/мес", "Допущение": f"{fixed_costs_delta:+.0%}",
-                 "База": base_fixed_costs, "Сценарий": fixed_costs_scn},
-                {"Показатель": "Визиты, шт/мес (спрос ограничен мощностью)", "Допущение": "—",
-                 "База": base_visits_total / len(base_months), "Сценарий": n_visits_scn},
+                {col_metric: t("Команда врачей", "Doctor team"), col_assumption: f"{team_delta:+.0%}",
+                 col_base: base_n_doctors, col_scenario: n_doctors_scn},
+                {col_metric: t("Объём записи, шт/мес", "Bookings, per month"), col_assumption: f"{booking_delta:+.0%}",
+                 col_base: base_n_booked_month, col_scenario: n_booked_scn},
+                {col_metric: t("Конверсия", "Conversion"), col_assumption: f"{conversion_delta:+.0%}",
+                 col_base: base_conversion, col_scenario: conversion_scn},
+                {col_metric: t("Загрузка, визитов/врача/мес", "Workload, visits/doctor/month"), col_assumption: f"{utilization_delta:+.0%}",
+                 col_base: visits_per_doctor_base, col_scenario: visits_per_doctor_base * (1 + utilization_delta)},
+                {col_metric: t("Средний чек, ₽", "Average check, ₽"), col_assumption: f"{price_delta:+.0%}",
+                 col_base: base_avg_check, col_scenario: avg_check_scn},
+                {col_metric: t("Постоянные расходы, ₽/мес", "Fixed costs, ₽/month"), col_assumption: f"{fixed_costs_delta:+.0%}",
+                 col_base: base_fixed_costs, col_scenario: fixed_costs_scn},
+                {col_metric: t("Визиты, шт/мес (спрос ограничен мощностью)", "Visits/month (demand capped by capacity)"), col_assumption: "—",
+                 col_base: base_visits_total / len(base_months), col_scenario: n_visits_scn},
             ])
             pnl_df = pd.DataFrame([{
-                "Выручка/мес": revenue_scn, "Переменные расходы/мес": variable_costs_scn,
-                "Маржинальная прибыль/мес": gross_profit_scn, "Постоянные расходы/мес": fixed_costs_scn,
-                "Операционная прибыль/мес": operating_profit_scn,
-                "ТБУ, визитов/мес": be_visits_scn, "ТБУ, клиентов/мес": be_clients_scn,
-                "Горизонт, мес.": horizon,
+                t("Выручка/мес", "Revenue/mo"): revenue_scn, t("Переменные расходы/мес", "Variable costs/mo"): variable_costs_scn,
+                t("Маржинальная прибыль/мес", "Gross profit/mo"): gross_profit_scn, t("Постоянные расходы/мес", "Fixed costs/mo"): fixed_costs_scn,
+                t("Операционная прибыль/мес", "Operating profit/mo"): operating_profit_scn,
+                t("ТБУ, визитов/мес", "Break-even, visits/mo"): be_visits_scn, t("ТБУ, клиентов/мес", "Break-even, clients/mo"): be_clients_scn,
+                t("Горизонт, мес.", "Horizon, mo."): horizon,
             }])
             cash_df = pd.DataFrame({
-                "Месяц горизонта": [f"+{m}" for m in months_ahead],
-                "Прогнозный остаток, ₽": cash_traj,
+                t("Месяц горизонта", "Month of horizon"): [f"+{m}" for m in months_ahead],
+                t("Прогнозный остаток, ₽", "Projected balance, ₽"): cash_traj,
             })
             buf = io.BytesIO()
             with pd.ExcelWriter(buf, engine="openpyxl") as writer:
-                assumptions_df.to_excel(writer, sheet_name="Допущения", index=False)
-                pnl_df.to_excel(writer, sheet_name="P&L сценария", index=False)
-                cash_df.to_excel(writer, sheet_name="Денежный поток", index=False)
+                assumptions_df.to_excel(writer, sheet_name=t("Допущения", "Assumptions"), index=False)
+                pnl_df.to_excel(writer, sheet_name=t("P&L сценария", "Scenario P&L"), index=False)
+                cash_df.to_excel(writer, sheet_name=t("Денежный поток", "Cash flow"), index=False)
             return buf.getvalue()
 
         st.download_button(
             t("⬇️ Выгрузить прогноз в Excel", "⬇️ Export forecast to Excel"),
             data=_build_forecast_excel(),
-            file_name=f"Прогноз_{selected_period}_{horizon}мес.xlsx",
+            file_name=t(f"Прогноз_{selected_period}_{horizon}мес.xlsx", f"Forecast_{selected_period}_{horizon}mo.xlsx"),
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
 
@@ -2456,8 +2457,8 @@ with tab9:
 # Секции добавляются в порядке выполнения кода (вкладки перемешаны), поэтому
 # сортируем по порядку вкладок дашборда — иначе одна вкладка в PPTX разбивается
 # на несколько блоков с повторяющимся заголовком.
-PPTX_TAB_ORDER = ["Финансовые показатели", "Клиенты", "Операционная эффективность",
-                  "Продукты/направления", "Юнит-экономика", "Запас прочности", "KPI"]
+PPTX_TAB_ORDER = [t("Финансовые показатели", "Financials"), t("Клиенты", "Clients"), t("Операционная эффективность", "Operations"),
+                  t("Продукты/направления", "Products/Directions"), t("Юнит-экономика", "Unit Economics"), t("Запас прочности", "Margin of Safety"), "KPI"]
 pptx_sections.sort(key=lambda s: PPTX_TAB_ORDER.index(s["tab"]) if s["tab"] in PPTX_TAB_ORDER else 99)
 
 if pptx_button_placeholder.button(t("📊 Сформировать PPTX", "📊 Generate PPTX"), use_container_width=True):
@@ -2471,11 +2472,12 @@ if pptx_button_placeholder.button(t("📊 Сформировать PPTX", "📊 
             metrics=summary_metrics_for_pptx,
             narrative=summary_narrative,
             sections=pptx_sections,
+            lang=LANG.lower(),
         )
     pptx_download_placeholder.download_button(
         t("⬇️ Скачать PPTX", "⬇️ Download PPTX"),
         data=pptx_bytes,
-        file_name=f"Отчет_Meridian_Health_{selected_period}.pptx",
+        file_name=t(f"Отчет_Meridian_Health_{selected_period}.pptx", f"Report_Meridian_Health_{selected_period}.pptx"),
         mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
         use_container_width=True,
     )

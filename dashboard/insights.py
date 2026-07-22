@@ -500,24 +500,26 @@ def churn_insight(churn_df, lang="ru"):
 
 # ───────────────────────── Scorecard удержания ─────────────────────────
 LEVEL_EN = {"Ниже среднего": "below average", "Средний": "average", "Хороший": "good", "Отличный": "excellent"}
+RETENTION_METRIC_RU = {"return_2nd": "Возврат на 2-й приём", "retention_3mo": "Удержание 3 мес", "retention_6mo": "Удержание 6 мес"}
+RETENTION_METRIC_EN = {"return_2nd": "2nd-visit return", "retention_3mo": "3-mo. retention", "retention_6mo": "6-mo. retention"}
 
 
 def retention_scorecard_insight(scorecard_df, lang="ru"):
     sc = scorecard_df.dropna(subset=["value"])
     if sc.empty:
         return "No data to assess retention." if lang == "en" else "Нет данных для оценки удержания."
-    key_metric = "Вернулись на 2-й приём"
+    key_metric = "return_2nd"
 
     if lang == "en":
         key_rows = sc[sc["metric"] == key_metric]
         parts = [f"{DIRECTION_EN.get(row['specialty'], row['specialty']).lower()} — {row['value']:.0%} ({LEVEL_EN.get(row['level'], row['level']).lower()})" for _, row in key_rows.iterrows()]
-        sentence = "“Returned for a 2nd visit”: " + "; ".join(parts) + "." if parts else ""
+        sentence = f"“{RETENTION_METRIC_EN[key_metric]}”: " + "; ".join(parts) + "." if parts else ""
         below_avg = sc[sc["level"] == "Ниже среднего"]
         if len(sc) and len(below_avg) == len(sc):
             sentence += " Every tracked retention metric for both specialties is below the target average — a systemic growth area, not a one-off dip."
         elif len(below_avg):
             worst = below_avg.iloc[0]
-            sentence += f" The weakest metric is “{worst['metric'].lower()}” in {DIRECTION_EN.get(worst['specialty'], worst['specialty']).lower()} ({worst['value']:.0%}, below average)."
+            sentence += f" The weakest metric is “{RETENTION_METRIC_EN.get(worst['metric'], worst['metric']).lower()}” in {DIRECTION_EN.get(worst['specialty'], worst['specialty']).lower()} ({worst['value']:.0%}, below average)."
         if len(key_rows) == 2:
             vals = key_rows.set_index("specialty")["value"]
             specs = list(vals.index)
@@ -531,14 +533,14 @@ def retention_scorecard_insight(scorecard_df, lang="ru"):
 
     key_rows = sc[sc["metric"] == key_metric]
     parts = [f"{row['specialty'].lower()} — {row['value']:.0%} ({row['level'].lower()})" for _, row in key_rows.iterrows()]
-    sentence = f"«{key_metric}»: " + "; ".join(parts) + "." if parts else ""
+    sentence = f"«{RETENTION_METRIC_RU[key_metric]}»: " + "; ".join(parts) + "." if parts else ""
 
     below_avg = sc[sc["level"] == "Ниже среднего"]
     if len(sc) and len(below_avg) == len(sc):
         sentence += " Все отслеживаемые метрики удержания по обеим специальностям — ниже среднего целевого уровня: это системная точка роста, а не разовый провал."
     elif len(below_avg):
         worst = below_avg.iloc[0]
-        sentence += f" Слабее всего «{worst['metric'].lower()}» в {oblique(worst['specialty'])} ({worst['value']:.0%}, ниже среднего)."
+        sentence += f" Слабее всего «{RETENTION_METRIC_RU.get(worst['metric'], worst['metric']).lower()}» в {oblique(worst['specialty'])} ({worst['value']:.0%}, ниже среднего)."
 
     if len(key_rows) == 2:
         vals = key_rows.set_index("specialty")["value"]
